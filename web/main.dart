@@ -12,16 +12,11 @@ void main() {
     var beta = 0.0;
     var gamma = 0.0;
     var absolute = 0.0;
-    BatteryManager batteryManager = await window.navigator.getBattery();
-    var battery = batteryManager.level;
     window.onDeviceOrientation.listen((event) {
       alpha = event.alpha;
       beta = event.beta;
       gamma = event.gamma;
       absolute = event.absolute;
-    });
-    batteryManager.on['levelchange'].listen((_) {
-      battery = batteryManager.level;
     });
 
     new Timer.periodic(new Duration(milliseconds: 100), (_) {
@@ -30,7 +25,6 @@ void main() {
         'beta': beta,
         'gamma': gamma,
         'absolute': absolute,
-        'battery': battery,
       }));
     });
 
