@@ -3624,6 +3624,7 @@ $1:function(a){var z,y
 z=J.ao(this.a,"content")
 y=P.aR()
 if(z!=null)y.k(0,"body",z)
+y.k(0,"icon","MdW.png")
 W.eb("M\xf6glichkeiten des Web",y)}}},1]]
 setupProgram(dart,0)
 J.j=function(a){if(typeof a=="number"){if(Math.floor(a)==a)return J.c1.prototype
