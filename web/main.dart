@@ -29,6 +29,9 @@ void main() {
               case 'changeColor':
                 changeColor(payload);
                 break;
+              case 'chat':
+                querySelector('#chat').style.display = 'block';
+                break;
             }
           }
         }
@@ -36,6 +39,33 @@ void main() {
         debug(e);
         debug(stacktrace);
       }
+    });
+  });
+
+  var bcWebSocket = new WebSocket('wss://isowosi.com/ws/bc/webstuff');
+  bcWebSocket.onOpen.listen((_) {
+    InputElement chat = querySelector('#chat');
+    chat.onKeyPress.listen((event) {
+      if (event.keyCode == KeyCode.ENTER) {
+        final divElement = new DivElement();
+        divElement.appendText('Ich: ${chat.value}');
+        bcWebSocket.send(JSON.encode({'type': 'chat', 'content': chat.value}));
+        chat.value = '';
+        querySelector('#output').append(divElement);
+      }
+    });
+    bcWebSocket.onMessage.listen((event) {
+      Map data = JSON.decode(event.data);
+      try {
+        if (data.containsKey('content') && data['content'] != 'removeClient') {
+          Map payload = JSON.decode(data['content']);
+          if (payload['type'] == 'chat') {
+            final divElement = new DivElement();
+            divElement.appendText('${data['id']}: ${payload['content']}');
+            querySelector('#output').append(divElement);
+          }
+        }
+      } catch (_) {}
     });
   });
 }
