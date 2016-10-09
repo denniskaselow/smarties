@@ -9,13 +9,14 @@ import 'dart:convert';
 void main() {
   var webSocket = new WebSocket('wss://isowosi.com/ws/c/webstuff');
   webSocket.onOpen.listen((_) async {
-
     webSocket.onMessage.listen((event) {
       var data = JSON.decode(event.data);
       debug(event.data);
 
       try {
-        if (data is Map && data.containsKey('content') && data['content'] != 'removeClient') {
+        if (data is Map &&
+            data.containsKey('content') &&
+            data['content'] != 'removeClient') {
           var payload = JSON.decode(data['content']);
           if (payload is Map && payload.containsKey('type')) {
             switch (payload['type']) {
@@ -24,6 +25,9 @@ void main() {
                 break;
               case 'devicedata':
                 deviceData(webSocket);
+                break;
+              case 'changeColor':
+                changeColor(payload);
                 break;
             }
           }
@@ -87,9 +91,16 @@ void debug(rawText) {
 void displayNotification(Map<String, String> payload) {
   if (Notification.supported) {
     Notification.requestPermission().then((_) {
-      new Notification('Möglichkeiten des Web', body: payload['content'], icon: 'MdW.png');
+      new Notification('Möglichkeiten des Web',
+          body: payload['content'], icon: 'MdW.png');
     });
   } else {
     debug('Notifications werden von deinem Gerät nicht unterstützt :(');
   }
+}
+
+void changeColor(Map payload) {
+  var hsl = JSON.decode(payload['content']);
+  querySelector('body').style.backgroundColor =
+      'hsl(${hsl['h']}, ${hsl['s']}%, ${hsl['l']}%)';
 }
