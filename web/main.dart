@@ -81,7 +81,7 @@ void debug(rawText) {
 void displayNotification(Map<String, String> payload) {
   if (Notification.supported) {
     Notification.requestPermission().then((_) {
-      new Notification('Möglichkeiten des Web', body: payload['content']);
+      new Notification('Möglichkeiten des Web', body: payload['content'], icon: 'MdW.png');
     });
   } else {
     debug('Notifications werden von deinem Gerät nicht unterstützt :(');
