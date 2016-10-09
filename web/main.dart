@@ -15,7 +15,7 @@ void main() {
       debug(event.data);
 
       try {
-        if (data is Map && data.containsKey('content')) {
+        if (data is Map && data.containsKey('content') && data['content'] != 'removeClient') {
           var payload = JSON.decode(data['content']);
           if (payload is Map && payload.containsKey('type')) {
             switch (payload['type']) {
@@ -75,7 +75,7 @@ void deviceData(WebSocket webSocket) {
 }
 
 void debug(rawText) {
-  final output = querySelector('#output');
+  final output = querySelector('div#debug');
   final preElement = new PreElement();
   preElement.text = rawText;
   output.append(preElement);
