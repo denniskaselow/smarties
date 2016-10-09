@@ -9,41 +9,6 @@ import 'dart:convert';
 void main() {
   var webSocket = new WebSocket('wss://isowosi.com/ws/c/webstuff');
   webSocket.onOpen.listen((_) async {
-    var alpha = 0.0;
-    var beta = 0.0;
-    var gamma = 0.0;
-    window.onDeviceOrientation.listen((event) {
-      alpha = event.alpha;
-      beta = event.beta;
-      gamma = event.gamma;
-    });
-    webSocket.send(JSON.encode({
-      'alpha': alpha,
-      'beta': beta,
-      'gamma': gamma,
-    }));
-    window.onDeviceMotion.listen((event) {
-      var acc = event.acceleration;
-      var interval = event.interval;
-      var rotationRate = event.rotationRate;
-      webSocket.send(JSON.encode({
-        'alpha': rotationRate.alpha,
-        'beta': rotationRate.beta,
-        'gamma': rotationRate.gamma,
-        'ax': acc.x,
-        'ay': acc.y,
-        'az': acc.z,
-        'interval': interval,
-      }));
-    });
-
-    new Timer.periodic(new Duration(milliseconds: 1000), (_) {
-      webSocket.send(JSON.encode({
-        'alpha': alpha,
-        'beta': beta,
-        'gamma': gamma,
-      }));
-    });
 
     webSocket.onMessage.listen((event) {
       var data = JSON.decode(event.data);
@@ -57,6 +22,9 @@ void main() {
               case 'notification':
                 displayNotification(payload);
                 break;
+              case 'devicedata':
+                deviceData(webSocket);
+                break;
             }
           }
         }
@@ -65,6 +33,44 @@ void main() {
         debug(stacktrace);
       }
     });
+  });
+}
+
+void deviceData(WebSocket webSocket) {
+  var alpha = 0.0;
+  var beta = 0.0;
+  var gamma = 0.0;
+  window.onDeviceOrientation.listen((event) {
+    alpha = event.alpha;
+    beta = event.beta;
+    gamma = event.gamma;
+  });
+  webSocket.send(JSON.encode({
+    'alpha': alpha,
+    'beta': beta,
+    'gamma': gamma,
+  }));
+  window.onDeviceMotion.listen((event) {
+    var acc = event.acceleration;
+    var interval = event.interval;
+    var rotationRate = event.rotationRate;
+    webSocket.send(JSON.encode({
+      'alpha': rotationRate.alpha,
+      'beta': rotationRate.beta,
+      'gamma': rotationRate.gamma,
+      'ax': acc.x,
+      'ay': acc.y,
+      'az': acc.z,
+      'interval': interval,
+    }));
+  });
+
+  new Timer.periodic(new Duration(milliseconds: 1000), (_) {
+    webSocket.send(JSON.encode({
+      'alpha': alpha,
+      'beta': beta,
+      'gamma': gamma,
+    }));
   });
 }
 
