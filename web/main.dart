@@ -1,4 +1,5 @@
 // Copyright (c) 2016, Dennis Kaselow. All rights reserved. Use of this source code
+
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
 import 'dart:async';
@@ -44,14 +45,45 @@ void main() {
       }));
     });
 
-    var output = querySelector('#output');
     webSocket.onMessage.listen((event) {
-      final divElement = new DivElement();
-      divElement.text = event.data;
-      output.append(divElement);
-      if (output.children.length > 10) {
-        output.children.removeAt(0);
+      var data = JSON.decode(event.data);
+      debug(event.data);
+
+      try {
+        if (data is Map && data.containsKey('content')) {
+          var payload = JSON.decode(data['content']);
+          if (payload is Map && payload.containsKey('type')) {
+            switch (payload['type']) {
+              case 'notification':
+                displayNotification(payload);
+                break;
+            }
+          }
+        }
+      } catch (e, stacktrace) {
+        debug(e);
+        debug(stacktrace);
       }
     });
   });
+}
+
+void debug(rawText) {
+  final output = querySelector('#output');
+  final preElement = new PreElement();
+  preElement.text = rawText;
+  output.append(preElement);
+  if (output.children.length > 10) {
+    output.children.removeAt(0);
+  }
+}
+
+void displayNotification(Map<String, String> payload) {
+  if (Notification.supported) {
+    Notification.requestPermission().then((_) {
+      new Notification('Möglichkeiten des Web', body: payload['content']);
+    });
+  } else {
+    debug('Notifications werden von deinem Gerät nicht unterstützt :(');
+  }
 }
