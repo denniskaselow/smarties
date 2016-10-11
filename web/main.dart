@@ -6,6 +6,10 @@ import 'dart:async';
 import 'dart:html';
 import 'dart:convert';
 
+StreamSubscription onDeviceOrientation;
+StreamSubscription onDeviceMotion;
+Timer sendTimer;
+
 void main() {
   var webSocket = new WebSocket('wss://isowosi.com/ws/c/webstuff');
   webSocket.onOpen.listen((_) async {
@@ -25,6 +29,9 @@ void main() {
                 break;
               case 'devicedata':
                 deviceData(webSocket);
+                break;
+              case 'stopdevicedata':
+                stopDeviceData();
                 break;
               case 'changeColor':
                 changeColor(payload);
@@ -51,7 +58,7 @@ void main() {
         divElement.appendText('Ich: ${chat.value}');
         bcWebSocket.send(JSON.encode({'type': 'chat', 'content': chat.value}));
         chat.value = '';
-        querySelector('#output').append(divElement);
+        output(divElement);
       }
     });
     bcWebSocket.onMessage.listen((event) {
@@ -62,7 +69,7 @@ void main() {
           if (payload['type'] == 'chat') {
             final divElement = new DivElement();
             divElement.appendText('${data['id']}: ${payload['content']}');
-            querySelector('#output').append(divElement);
+            output(divElement);
           }
         }
       } catch (_) {}
@@ -70,21 +77,36 @@ void main() {
   });
 }
 
+void stopDeviceData() {
+  onDeviceMotion?.cancel();
+  onDeviceOrientation?.cancel();
+  sendTimer.cancel();
+}
+
+void output(DivElement divElement) {
+  var target = querySelector('#output');
+  if (target.children.isEmpty) {
+    target.append(divElement);
+  } else {
+    target.insertBefore(divElement, target.children.first);
+  }
+}
+
 void deviceData(WebSocket webSocket) {
   var alpha = 0.0;
   var beta = 0.0;
   var gamma = 0.0;
-  window.onDeviceOrientation.listen((event) {
+  onDeviceOrientation = window.onDeviceOrientation.listen((event) {
     alpha = event.alpha;
     beta = event.beta;
     gamma = event.gamma;
   });
   webSocket.send(JSON.encode({
-    'alpha': alpha,
-    'beta': beta,
-    'gamma': gamma,
+    'alpha': alpha.toDouble(),
+    'beta': beta.toDouble(),
+    'gamma': gamma.toDouble(),
   }));
-  window.onDeviceMotion.listen((event) {
+  onDeviceMotion = window.onDeviceMotion.listen((event) {
     var acc = event.acceleration;
     var interval = event.interval;
     var rotationRate = event.rotationRate;
@@ -99,7 +121,7 @@ void deviceData(WebSocket webSocket) {
     }));
   });
 
-  new Timer.periodic(new Duration(milliseconds: 1000), (_) {
+  sendTimer = new Timer.periodic(new Duration(milliseconds: 1000), (_) {
     webSocket.send(JSON.encode({
       'alpha': alpha,
       'beta': beta,
