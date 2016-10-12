@@ -3569,7 +3569,7 @@ gbz:function(a){return new W.cF(a,"keypress",!1,[W.c4])},
 $ise:1,
 "%":"SVGComponentTransferFunctionElement|SVGDescElement|SVGDiscardElement|SVGFEDistantLightElement|SVGFEFuncAElement|SVGFEFuncBElement|SVGFEFuncGElement|SVGFEFuncRElement|SVGFEMergeNodeElement|SVGFEPointLightElement|SVGFESpotLightElement|SVGMetadataElement|SVGStopElement|SVGStyleElement|SVGTitleElement;SVGElement"},iM:{"^":"av;",$ise:1,"%":"SVGSVGElement"},iN:{"^":"l;",$ise:1,"%":"SVGSymbolElement"},eD:{"^":"av;","%":"SVGTSpanElement|SVGTextElement|SVGTextPositioningElement;SVGTextContentElement"},iQ:{"^":"eD;",$ise:1,"%":"SVGTextPathElement"},iR:{"^":"av;",$ise:1,"%":"SVGUseElement"},iS:{"^":"l;",$ise:1,"%":"SVGViewElement"},j2:{"^":"l;",$ise:1,"%":"SVGGradientElement|SVGLinearGradientElement|SVGRadialGradientElement"},j4:{"^":"l;",$ise:1,"%":"SVGCursorElement"},j5:{"^":"l;",$ise:1,"%":"SVGFEDropShadowElement"},j6:{"^":"l;",$ise:1,"%":"SVGMPathElement"}}],["","",,P,{"^":""}],["","",,P,{"^":""}],["","",,P,{"^":""}],["","",,F,{"^":"",
 jb:[function(){var z,y,x
-z=W.cy("wss://isowosi.com/ws/c/webstuff",null)
+z=W.cy("wss://isowosi.com/ws/c/webstuffserver",null)
 y=[W.O]
 new W.a5(0,z,"open",W.aa(new F.hv(z)),!1,y).G()
 x=W.cy("wss://isowosi.com/ws/bc/webstuff",null)
