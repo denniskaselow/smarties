@@ -9,7 +9,7 @@ import 'dart:convert';
 StreamSubscription onDeviceOrientation;
 
 void main() {
-  var webSocket = new WebSocket('wss://isowosi.com/ws/c/webstuff');
+  var webSocket = new WebSocket('wss://isowosi.com/ws/c/webstuffserver');
   webSocket.onOpen.listen((_) async {
     webSocket.onMessage.listen((event) {
       var data = JSON.decode(event.data);
