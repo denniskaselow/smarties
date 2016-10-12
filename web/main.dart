@@ -89,9 +89,19 @@ void output(DivElement divElement) {
 }
 
 void deviceData(WebSocket webSocket) {
-  debug('start deviceData');
+  webSocket.send(JSON.encode({
+    'alpha': 0.0,
+    'beta': 0.0,
+    'gamma': 0.0,
+  }));
+  bool deviceRegistered = false;
   onDeviceOrientation = window.onDeviceOrientation.listen((event) {
-    debug('onDeviceOrientation');
+    if (!deviceRegistered) {
+      final divElement = new DivElement();
+      divElement.appendText('Gerät wird jetzt angezeigt');
+      output(divElement);
+      deviceRegistered = true;
+    }
     webSocket.send(JSON.encode({
       'alpha': event.alpha,
       'beta': event.beta,
@@ -117,7 +127,9 @@ void displayNotification(Map<String, String> payload) {
           body: payload['content'], icon: 'MdW.png');
     });
   } else {
-    debug('Notifications werden von deinem Gerät nicht unterstützt :(');
+    final divElement = new DivElement();
+    divElement.appendText('Notifications werden von deinem Gerät/Browser nicht unterstützt :(');
+    output(divElement);
   }
 }
 
