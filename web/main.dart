@@ -89,13 +89,15 @@ void output(DivElement divElement) {
 }
 
 void deviceData(WebSocket webSocket) {
+  debug('start deviceData');
   onDeviceOrientation = window.onDeviceOrientation.listen((event) {
+    debug('onDeviceOrientation');
     webSocket.send(JSON.encode({
       'alpha': event.alpha,
       'beta': event.beta,
       'gamma': event.gamma,
     }));
-  });  
+  });
 }
 
 void debug(rawText) {
