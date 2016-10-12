@@ -7,8 +7,6 @@ import 'dart:html';
 import 'dart:convert';
 
 StreamSubscription onDeviceOrientation;
-StreamSubscription onDeviceMotion;
-Timer sendTimer;
 
 void main() {
   var webSocket = new WebSocket('wss://isowosi.com/ws/c/webstuff');
@@ -78,9 +76,7 @@ void main() {
 }
 
 void stopDeviceData() {
-  onDeviceMotion?.cancel();
   onDeviceOrientation?.cancel();
-  sendTimer.cancel();
 }
 
 void output(DivElement divElement) {
@@ -93,41 +89,13 @@ void output(DivElement divElement) {
 }
 
 void deviceData(WebSocket webSocket) {
-  var alpha = 0.0;
-  var beta = 0.0;
-  var gamma = 0.0;
   onDeviceOrientation = window.onDeviceOrientation.listen((event) {
-    alpha = event.alpha;
-    beta = event.beta;
-    gamma = event.gamma;
-  });
-  webSocket.send(JSON.encode({
-    'alpha': alpha.toDouble(),
-    'beta': beta.toDouble(),
-    'gamma': gamma.toDouble(),
-  }));
-  onDeviceMotion = window.onDeviceMotion.listen((event) {
-    var acc = event.acceleration;
-    var interval = event.interval;
-    var rotationRate = event.rotationRate;
     webSocket.send(JSON.encode({
-      'alpha': rotationRate.alpha,
-      'beta': rotationRate.beta,
-      'gamma': rotationRate.gamma,
-      'ax': acc.x,
-      'ay': acc.y,
-      'az': acc.z,
-      'interval': interval,
+      'alpha': event.alpha,
+      'beta': event.beta,
+      'gamma': event.gamma,
     }));
-  });
-
-  sendTimer = new Timer.periodic(new Duration(milliseconds: 1000), (_) {
-    webSocket.send(JSON.encode({
-      'alpha': alpha,
-      'beta': beta,
-      'gamma': gamma,
-    }));
-  });
+  });  
 }
 
 void debug(rawText) {
